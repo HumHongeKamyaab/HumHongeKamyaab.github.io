@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgecca46a">Packages and config</a>
+<ul>
+<li><a href="#orgdd07dba">straight</a></li>
+<li><a href="#org726f747">evil</a></li>
+<li><a href="#org29678af">counsel, ivy setting</a></li>
+<li><a href="#org817de30">company</a></li>
+<li><a href="#org380f1cb">magit, which key</a></li>
+<li><a href="#org7170f5c">pdf-tools</a></li>
+<li><a href="#orgfcbde10">Custom functions</a></li>
+<li><a href="#orgcdb3cbb">Olivetti</a></li>
+<li><a href="#org8999bdb">latex</a>
+<ul>
+<li><a href="#org1f23eb9">folding/unfolding like org-mode</a></li>
+<li><a href="#org77bced0">auctex</a></li>
+<li><a href="#org3903355">ivy-bibtex</a></li>
+<li><a href="#org6697054">org-ref</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf5e34f8">Keybinding</a></li>
+<li><a href="#orgfbf0489">Workflow</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgecca46a" class="outline-2">
+<h2 id="orgecca46a">Packages and config</h2>
+<div class="outline-text-2" id="text-orgecca46a">
+</div>
+<div id="outline-container-orgdd07dba" class="outline-3">
+<h3 id="orgdd07dba">straight</h3>
+<div class="outline-text-3" id="text-orgdd07dba">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">defvar</span> <span style="font-weight: bold; font-style: italic;">bootstrap-version</span>)
+(<span style="font-weight: bold;">let</span> ((bootstrap-file
+       (expand-file-name <span style="font-style: italic;">"straight/repos/straight.el/bootstrap.el"</span> user-emacs-directory))
+      (bootstrap-version 5))
+  (<span style="font-weight: bold;">unless</span> (file-exists-p bootstrap-file)
+    (<span style="font-weight: bold;">with-current-buffer</span>
+        (url-retrieve-synchronously
+         <span style="font-style: italic;">"https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"</span>
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(<span style="font-weight: bold;">setq</span> straight-use-package-by-default t)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org726f747" class="outline-3">
+<h3 id="org726f747">evil</h3>
+<div class="outline-text-3" id="text-org726f747">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (use-package evil
+    <span style="font-weight: bold;">:init</span>
+    (<span style="font-weight: bold;">setq</span> evil-toggle-key <span style="font-style: italic;">"C-&lt;f1&gt;"</span>)
+    (<span style="font-weight: bold;">setq</span> evil-shift-width 2)
+    (<span style="font-weight: bold;">setq</span> evil-want-integration t)
+    (<span style="font-weight: bold;">setq</span> evil-want-keybinding nil)
+    <span style="font-weight: bold;">:config</span>
+    (evil-mode 1)
+
+    <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Use visual line motions even outside of visual-line-mode buffers</span>
+    (evil-global-set-key 'motion <span style="font-style: italic;">"j"</span> 'evil-next-visual-line)
+    (evil-global-set-key 'motion <span style="font-style: italic;">"k"</span> 'evil-previous-visual-line)
+
+    (evil-set-initial-state 'dired-mode 'emacs)
+    (evil-set-initial-state 'pdf-view-mode 'emacs)
+    (evil-set-initial-state 'messages-buffer-mode 'emacs)
+  )
+
+(use-package evil-nerd-commenter
+  <span style="font-weight: bold;">:bind</span> (<span style="font-style: italic;">"M-/"</span> . evilnc-comment-or-uncomment-lines))
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org29678af" class="outline-3">
+<h3 id="org29678af">counsel, ivy setting</h3>
+<div class="outline-text-3" id="text-org29678af">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (use-package counsel
+    <span style="font-weight: bold;">:diminish</span> ivy-mode
+    <span style="font-weight: bold;">:diminish</span> counsel-mode
+    <span style="font-weight: bold;">:bind</span> ((<span style="font-style: italic;">"C-s"</span> . swiper)
+         <span style="font-weight: bold;">:map</span> ivy-minibuffer-map
+         (<span style="font-style: italic;">"TAB"</span> . ivy-alt-done))
+    <span style="font-weight: bold;">:init</span>
+    (ivy-mode 1)
+    (counsel-mode 1)
+    <span style="font-weight: bold;">:config</span>
+    (<span style="font-weight: bold;">setq</span> ivy-use-virtual-buffers t)
+    (<span style="font-weight: bold;">setq</span> enable-recursive-minibuffers t))
+
+  (use-package prescient
+    <span style="font-weight: bold;">:diminish</span>
+    <span style="font-weight: bold;">:config</span>
+    <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">(prescient-persist-mode)</span>
+)
+
+
+  (use-package ivy-prescient
+    <span style="font-weight: bold;">:after</span> counsel
+    <span style="font-weight: bold;">:init</span>
+    (ivy-prescient-mode)
+    (prescient-persist-mode)
+    )
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org817de30" class="outline-3">
+<h3 id="org817de30">company</h3>
+<div class="outline-text-3" id="text-org817de30">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package company
+  <span style="font-weight: bold;">:straight</span> (company <span style="font-weight: bold;">:files</span> (<span style="font-weight: bold;">:defaults</span> <span style="font-style: italic;">"icons"</span>))
+  <span style="font-weight: bold;">:diminish</span> company-mode
+  <span style="font-weight: bold;">:bind</span> (<span style="font-weight: bold;">:map</span> company-active-map
+          (<span style="font-style: italic;">"&lt;tab&gt;"</span> . nil)
+          (<span style="font-style: italic;">"TAB"</span> . nil))
+  <span style="font-weight: bold;">:custom</span>
+  (company-minimum-prefix-length 2)
+  (company-idle-delay 0.01)
+  <span style="font-weight: bold;">:config</span>
+ )
+
+(use-package company-prescient
+    <span style="font-weight: bold;">:after</span> company
+    <span style="font-weight: bold;">:config</span>
+    (company-prescient-mode 1)
+    (prescient-persist-mode)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org380f1cb" class="outline-3">
+<h3 id="org380f1cb">magit, which key</h3>
+<div class="outline-text-3" id="text-org380f1cb">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package which-key
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">:ensure t</span>
+  <span style="font-weight: bold;">:diminish</span> which-key-mode
+  <span style="font-weight: bold;">:config</span>
+     (which-key-mode))
+
+<span style="font-weight: bold; font-style: italic;">; </span><span style="font-weight: bold; font-style: italic;">magit</span>
+(use-package magit
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">:ensure t</span>
+  <span style="font-weight: bold;">:defer</span> t
+  <span style="font-weight: bold;">:bind</span> (<span style="font-style: italic;">"C-x g"</span> . magit-status))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7170f5c" class="outline-3">
+<h3 id="org7170f5c">pdf-tools</h3>
+<div class="outline-text-3" id="text-org7170f5c">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package pdf-tools
+  <span style="font-weight: bold;">:magic</span> (<span style="font-style: italic;">"%PDF"</span> . pdf-view-mode)
+  <span style="font-weight: bold;">:config</span>
+  (pdf-tools-install)
+  (<span style="font-weight: bold;">setq-default</span> pdf-view-display-size 'fit-page)
+  )
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfcbde10" class="outline-3">
+<h3 id="orgfcbde10">Custom functions</h3>
+<div class="outline-text-3" id="text-orgfcbde10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="font-weight: bold;">defun</span> <span style="font-weight: bold;">try/TeX-command-save-buffer-and-run-all</span> ()
+    <span style="font-style: italic;">"Save the buffer and run TeX-command-run-all"</span>
+    (<span style="font-weight: bold;">interactive</span>)
+    (<span style="font-weight: bold;">let</span> (TeX-save-query) (TeX-save-document (TeX-master-file)))
+    (TeX-command-run-all nil))
+
+<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">copied ivy-bibtex and modified it to cite action</span>
+(<span style="font-weight: bold;">defun</span> <span style="font-weight: bold;">try/ivy-bibtex-cite</span> (<span style="font-weight: bold; text-decoration: underline;">&amp;optional</span> arg local-bib)
+  <span style="font-style: italic;">"Search BibTeX entries using ivy.</span>
+
+<span style="font-style: italic;">With a prefix ARG the cache is invalidated and the bibliography</span>
+<span style="font-style: italic;">reread.</span>
+
+<span style="font-style: italic;">If LOCAL-BIB is non-nil, display that the BibTeX entries are read</span>
+<span style="font-style: italic;">from the local bibliography.  This is set internally by</span>
+<span style="font-style: italic;">`</span><span style="font-weight: bold; font-style: italic; text-decoration: underline;">ivy-bibtex-with-local-bibliography</span><span style="font-style: italic;">'."</span>
+  (<span style="font-weight: bold;">interactive</span> <span style="font-style: italic;">"P"</span>)
+  (<span style="font-weight: bold;">when</span> arg
+    (bibtex-completion-clear-cache))
+  (bibtex-completion-init)
+  (<span style="font-weight: bold;">let*</span> ((candidates (bibtex-completion-candidates))
+          (key (bibtex-completion-key-at-point))
+          (preselect (<span style="font-weight: bold;">and</span> key
+                          (cl-position-if (<span style="font-weight: bold;">lambda</span> (cand)
+                                            (member (cons <span style="font-style: italic;">"=key="</span> key)
+                                                    (cdr cand)))
+                                          candidates))))
+    (ivy-read (format <span style="font-style: italic;">"Insert citation %s: "</span> (<span style="font-weight: bold;">if</span> local-bib <span style="font-style: italic;">" (local)"</span> <span style="font-style: italic;">""</span>))
+              candidates
+              <span style="font-weight: bold;">:preselect</span> preselect
+              <span style="font-weight: bold;">:caller</span> 'ivy-bibtex
+              <span style="font-weight: bold;">:history</span> 'ivy-bibtex-history
+              <span style="font-weight: bold;">:action</span> 'ivy-bibtex-insert-citation)))
+
+(<span style="font-weight: bold;">defun</span> <span style="font-weight: bold;">try/latex-mode-setup</span> ()
+  (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">company-reftex</span>)
+        (turn-on-reftex)
+        (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">company-auctex</span>)
+        (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">company-math</span>)
+(<span style="font-weight: bold;">setq-local</span> company-backends
+
+    (append '(
+                              (company-reftex-labels
+                                company-reftex-citations)
+              (company-math-symbols-unicode company-math-symbols-latex company-latex-commands)
+              (company-auctex-macros company-auctex-symbols company-auctex-environments)
+              company-ispell
+              )
+            company-backends)))
+
+
+(<span style="font-weight: bold;">defun</span> <span style="font-weight: bold;">try/counsel-insert-file-path</span> ()
+  <span style="font-style: italic;">"Insert relative file path using counsel minibuffer"</span>
+  (<span style="font-weight: bold;">interactive</span>)
+  (<span style="font-weight: bold;">unless</span> (<span style="font-weight: bold;">featurep</span> '<span style="font-weight: bold; text-decoration: underline;">counsel</span>) (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">counsel</span>))
+  (ivy-read <span style="font-style: italic;">"Insert filename: "</span> 'read-file-name-internal
+            <span style="font-weight: bold;">:matcher</span> #'counsel--find-file-matcher
+            <span style="font-weight: bold;">:action</span>
+            (<span style="font-weight: bold;">lambda</span> (x)
+              (insert (file-relative-name x)))))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcdb3cbb" class="outline-3">
+<h3 id="orgcdb3cbb">Olivetti</h3>
+<div class="outline-text-3" id="text-orgcdb3cbb">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package olivetti
+<span style="font-weight: bold;">:diminish</span>
+<span style="font-weight: bold;">:hook</span> (text-mode . olivetti-mode)
+<span style="font-weight: bold;">:config</span>
+(<span style="font-weight: bold;">setq</span> olivetti-body-width 100)
+)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8999bdb" class="outline-3">
+<h3 id="org8999bdb">latex</h3>
+<div class="outline-text-3" id="text-org8999bdb">
+</div>
+<div id="outline-container-org1f23eb9" class="outline-4">
+<h4 id="org1f23eb9">folding/unfolding like org-mode</h4>
+<div class="outline-text-4" id="text-org1f23eb9">
+<p>
+Enable folding and unfolding sections just like org-mode (using <code>TAB</code>) using <a href="https://github.com/alphapapa/outshine/issues/85">outshine</a>
+</p>
+
+<p>
+Check <code>outshine-cycle</code> for more options.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package outshine
+  <span style="font-weight: bold;">:config</span>
+(<span style="font-weight: bold;">setq</span> LaTeX-section-list '(
+                           (<span style="font-style: italic;">"part"</span> 0)
+                           (<span style="font-style: italic;">"chapter"</span> 1)
+                           (<span style="font-style: italic;">"section"</span> 2)
+                           (<span style="font-style: italic;">"subsection"</span> 3)
+                           (<span style="font-style: italic;">"subsubsection"</span> 4)
+                           (<span style="font-style: italic;">"paragraph"</span> 5)
+                           (<span style="font-style: italic;">"subparagraph"</span> 6)
+                           (<span style="font-style: italic;">"begin"</span> 7)
+                           )
+      )
+(add-hook 'LaTeX-mode-hook #'(lambda ()
+                               (outshine-mode 1)
+                               (<span style="font-weight: bold;">setq</span> outline-level #'LaTeX-outline-level)
+                               (<span style="font-weight: bold;">setq</span> outline-regexp (LaTeX-outline-regexp t))
+                               (<span style="font-weight: bold;">setq</span> outline-heading-alist
+                                     (mapcar (<span style="font-weight: bold;">lambda</span> (x)
+                                               (cons (concat <span style="font-style: italic;">"\\"</span> (nth 0 x)) (nth 1 x)))
+                                             LaTeX-section-list))))
+
+  )
+
+    (general-define-key
+      <span style="font-weight: bold;">:states</span> '(normal visual)
+      <span style="font-weight: bold;">:keymaps</span> 'LaTeX-mode-map
+      <span style="font-style: italic;">"TAB"</span>  '(outshine-cycle <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"outshine-cycle"</span>)
+  )
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org77bced0" class="outline-4">
+<h4 id="org77bced0">auctex</h4>
+<div class="outline-text-4" id="text-org77bced0">
+<p>
+<a href="https://people.umass.edu/weikaichen/post/emacs-academic-tools/">source: blog</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+      <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">latexmk</span>
+      (use-package auctex-latexmk)
+      <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">company</span>
+      (use-package company-math)
+      (use-package company-auctex)
+(use-package company-reftex)
+
+
+      <span style="font-weight: bold; font-style: italic;">;;  </span><span style="font-weight: bold; font-style: italic;">use cdlatex</span>
+      (use-package cdlatex)
+
+      <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">https://gist.github.com/saevarb/367d3266b3f302ecc896</span>
+      <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">https://piotr.is/2010/emacs-as-the-ultimate-latex-editor/</span>
+
+      (use-package latex
+        <span style="font-weight: bold;">:straight</span> auctex
+        <span style="font-weight: bold;">:defer</span> t
+        <span style="font-weight: bold;">:custom</span>
+        (olivetti-body-width 100)
+        (cdlatex-simplify-sub-super-scripts nil)
+        (reftex-default-bibliography
+              '(<span style="font-style: italic;">"~/ref.bib"</span>))
+        (bibtex-dialect 'biblatex)
+        <span style="font-weight: bold;">:mode</span>
+          (<span style="font-style: italic;">"\\.tex\\'"</span> . latex-mode)
+        <span style="font-weight: bold;">:bind</span> (<span style="font-weight: bold;">:map</span> LaTeX-mode-map
+                  (<span style="font-style: italic;">"C-c C-e"</span> . cdlatex-environment)
+              )
+        <span style="font-weight: bold;">:hook</span>
+          (LaTeX-mode . olivetti-mode)
+          (LaTeX-mode . TeX-PDF-mode)
+          (LaTeX-mode . company-mode)
+          (LaTeX-mode . flyspell-mode)
+          (LaTeX-mode . flycheck-mode)
+          (LaTeX-mode . LaTeX-math-mode)
+          (LaTeX-mode . turn-on-reftex)
+          (LaTeX-mode . TeX-source-correlate-mode)
+          (LaTeX-mode . try/latex-mode-setup)
+          (LaTeX-mode . turn-on-cdlatex)
+
+        <span style="font-weight: bold;">:config</span>
+          (<span style="font-weight: bold;">setq</span> TeX-auto-save t)
+          (<span style="font-weight: bold;">setq</span> TeX-parse-self t)
+          (<span style="font-weight: bold;">setq-default</span> TeX-master nil)
+          (<span style="font-weight: bold;">setq</span> TeX-save-query nil)
+
+          (<span style="font-weight: bold;">setq</span> reftex-plug-into-AUCTeX t)
+
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">pdftools</span>
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">https://emacs.stackexchange.com/questions/21755/use-pdfview-as-default-auctex-pdf-viewer#21764</span>
+          (<span style="font-weight: bold;">setq</span> TeX-view-program-selection '((output-pdf <span style="font-style: italic;">"PDF Tools"</span>))
+              TeX-view-program-list '((<span style="font-style: italic;">"PDF Tools"</span> TeX-pdf-tools-sync-view))
+              TeX-source-correlate-start-server t) <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">not sure if last line is neccessary</span>
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">to have the buffer refresh after compilation,</span>
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">very important so that PDFView refesh itself after comilation</span>
+          (add-hook 'TeX-after-compilation-finished-functions
+                      #'TeX-revert-document-buffer)
+
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">latexmk</span>
+          (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">auctex-latexmk</span>)
+          (auctex-latexmk-setup)
+          (<span style="font-weight: bold;">setq</span> auctex-latexmk-inherit-TeX-PDF-mode t)
+      )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3903355" class="outline-4">
+<h4 id="org3903355">ivy-bibtex</h4>
+<div class="outline-text-4" id="text-org3903355">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(use-package ivy-bibtex
+  <span style="font-weight: bold;">:custom</span>
+  (bibtex-completion-bibliography
+        '(<span style="font-style: italic;">"~/ref.bib"</span>))
+  (bibtex-completion-library-path '(<span style="font-style: italic;">"~/papers"</span>))
+  (bibtex-completion-cite-prompt-for-optional-arguments nil)
+  (bibtex-completion-cite-default-as-initial-input t)
+)
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6697054" class="outline-4">
+<h4 id="org6697054">org-ref</h4>
+<div class="outline-text-4" id="text-org6697054">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-ref
+<span style="font-weight: bold;">:custom</span>
+(org-ref-default-bibliography <span style="font-style: italic;">"~/ref.bib"</span>)
+(org-ref-pdf-directory <span style="font-style: italic;">"~/papers"</span>)
+(org-ref-completion-library 'org-ref-ivy-cite)
+<span style="font-weight: bold;">:config</span>
+(<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">org-ref-wos</span>)
+(<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">doi-utils</span>)
+)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf5e34f8" class="outline-2">
+<h2 id="orgf5e34f8">Keybinding</h2>
+<div class="outline-text-2" id="text-orgf5e34f8">
+<p>
+Use <code>SPC</code> has leader key (in evil normal mode) for local latex mode keybindings
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(use-package general
+  <span style="font-weight: bold;">:config</span>
+  (general-evil-setup t))
+
+  (general-define-key
+    <span style="font-weight: bold;">:states</span> '(normal visual)
+    <span style="font-weight: bold;">:keymaps</span> 'LaTeX-mode-map
+    <span style="font-weight: bold;">:prefix</span> <span style="font-style: italic;">"SPC"</span>
+      <span style="font-style: italic;">"f"</span>  '(LaTeX-fill-region <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"latex-fill-region"</span>)
+      <span style="font-style: italic;">"SPC"</span>  '(try/TeX-command-save-buffer-and-run-all <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"latex-save-run"</span>)
+      <span style="font-style: italic;">"c"</span>  '(try/ivy-bibtex-cite <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"ivy-cite"</span>)
+      <span style="font-style: italic;">"i"</span>   '(try/counsel-insert-file-path <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"insert-relative-filepath"</span>)
+      <span style="font-style: italic;">"b"</span> '(ivy-bibtex <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"ivy-bibtex"</span>)
+      <span style="font-style: italic;">"t"</span> '(tab-bar-switch-to-tab <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"tab-switch-name"</span>)
+   <span style="font-style: italic;">"o"</span>  '(outshine-imenu <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"menu"</span>)
+   <span style="font-style: italic;">"t"</span>  '(outshine-cycle-buffer <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"fold-buffer"</span>)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfbf0489" class="outline-2">
+<h2 id="orgfbf0489">Workflow</h2>
+<div class="outline-text-2" id="text-orgfbf0489">
+<p>
+TODO
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.3 (<a href="https://orgmode.org">Org</a> mode 9.1.9)</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>

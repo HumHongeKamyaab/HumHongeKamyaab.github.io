@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EMACS python configuration from scratch using lsp-pyright</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+</head>
+<body>
+<div id="content">
+<h1 class="title">EMACS python configuration from scratch using lsp-pyright</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgd2bea55">Installation of packages</a>
+<ul>
+<li><a href="#org6afde2e">Straight</a></li>
+<li><a href="#org6f0cc42">Performance</a></li>
+<li><a href="#orge81d4c4">No littering</a></li>
+</ul>
+</li>
+<li><a href="#org031859f">Evil</a>
+<ul>
+<li><a href="#org8e53df3">evil mode</a></li>
+<li><a href="#orgcb0062e">evil-nerd-commentor</a></li>
+<li><a href="#orgaab89de">undo-tree</a></li>
+</ul>
+</li>
+<li><a href="#orgfb2b069">Ivy, counsel</a>
+<ul>
+<li><a href="#org91ae8c6">counsel</a></li>
+<li><a href="#orgf9546f1">ivy-misc</a></li>
+<li><a href="#orgb112540">prescient</a></li>
+</ul>
+</li>
+<li><a href="#org8187a44">Treemacs</a></li>
+<li><a href="#org248ab29">Tools</a>
+<ul>
+<li><a href="#org7283f47">which-key</a></li>
+<li><a href="#org3ba4561">magit</a></li>
+<li><a href="#org27c4eb6">projectile</a></li>
+<li><a href="#org68c2b6e">eldoc</a></li>
+</ul>
+</li>
+<li><a href="#org9416384">Company</a>
+<ul>
+<li><a href="#org4c8fdd6">company-mode</a></li>
+<li><a href="#org9408724">prescient</a></li>
+</ul>
+</li>
+<li><a href="#org198face">Yasnippet</a></li>
+<li><a href="#org665f77b">Flycheck</a></li>
+<li><a href="#org0f7cf16">Lsp mode</a>
+<ul>
+<li><a href="#org0c800f5">lsp-mode</a></li>
+<li><a href="#org414aa03">lsp-ivy</a></li>
+<li><a href="#org7f8796c">lsp-ui</a></li>
+<li><a href="#org0e9a388">lsp-treemacs</a></li>
+</ul>
+</li>
+<li><a href="#orgb042e0c">Python configuration</a>
+<ul>
+<li><a href="#org9949cbc">pyright</a></li>
+<li><a href="#orgf27e38c">pyvenv</a></li>
+<li><a href="#org5df762e">formatting</a></li>
+<li><a href="#orgff39432">python-mode</a></li>
+</ul>
+</li>
+<li><a href="#orgb89ba6e">Keybinding</a>
+<ul>
+<li><a href="#orgcc3061e">General setup</a></li>
+<li><a href="#org557a051">Global keys</a></li>
+<li><a href="#org37fed38">Lsp keybinding</a></li>
+</ul>
+</li>
+<li><a href="#org6d27953">Workflow</a>
+<ul>
+<li>
+<ul>
+<li><a href="#orgd89f7ad">.dir-locals.el</a></li>
+<li><a href="#org74cb31f">pyrightconfig.json (optional)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf573f78">How to set python virtualenv</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgd2bea55" class="outline-2">
+<h2 id="orgd2bea55">Installation of packages</h2>
+<div class="outline-text-2" id="text-orgd2bea55">
+</div>
+<div id="outline-container-org6afde2e" class="outline-3">
+<h3 id="org6afde2e">Straight</h3>
+<div class="outline-text-3" id="text-org6afde2e">
+<p>
+We will use <code>straight.el</code> to install packages
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">defvar</span> <span style="font-weight: bold; font-style: italic;">bootstrap-version</span>)
+(<span style="font-weight: bold;">let</span> ((bootstrap-file
+       (expand-file-name <span style="font-style: italic;">"straight/repos/straight.el/bootstrap.el"</span> user-emacs-directory))
+      (bootstrap-version 5))
+  (<span style="font-weight: bold;">unless</span> (file-exists-p bootstrap-file)
+    (<span style="font-weight: bold;">with-current-buffer</span>
+        (url-retrieve-synchronously
+         <span style="font-style: italic;">"https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"</span>
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(<span style="font-weight: bold;">setq</span> straight-use-package-by-default t)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6f0cc42" class="outline-3">
+<h3 id="org6f0cc42">Performance</h3>
+<div class="outline-text-3" id="text-org6f0cc42">
+<p>
+These options improve performance for lsp in emacs. Use <code>M-x</code> <code>lsp-doctor</code> in lsp-mode to investigate performance of your config.<br />
+</p>
+
+<p>
+check lsp documentation at <a href="https://emacs-lsp.github.io/lsp-mode/page/performance/">lsp performace</a> <br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">The default is 800 kilobytes.  Measured in bytes.</span>
+(<span style="font-weight: bold;">setq</span> gc-cons-threshold (* 100 1024 1024)) <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">100 MB</span>
+(<span style="font-weight: bold;">setq</span> read-process-output-max (* 1 1024 1024)) <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">1 MB</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge81d4c4" class="outline-3">
+<h3 id="orge81d4c4">No littering</h3>
+<div class="outline-text-3" id="text-orge81d4c4">
+<p>
+Keep clean <code>~/.emacs.d</code> folder. 
+</p>
+
+<p>
+Check <code>lsp</code> files in <code>~/.emacs.d/var/lsp/*</code>.
+</p>
+
+<p>
+You can delete/modify this folder to hard reset lsp configuration in emacs.
+</p>
+
+<p>
+<a href="https://github.com/daviwil/emacs-from-scratch/blob/master/Emacs.org#keep-folders-clean">taken from EFS</a> <br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package no-littering)
+
+<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">no-littering doesn't set this by default so we must place</span>
+<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">auto save files in the same path as it uses for sessions</span>
+(<span style="font-weight: bold;">setq</span> auto-save-file-name-transforms
+      `((<span style="font-style: italic;">".*"</span> ,(no-littering-expand-var-file-name <span style="font-style: italic;">"auto-save/"</span>) t)))
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org031859f" class="outline-2">
+<h2 id="org031859f">Evil</h2>
+<div class="outline-text-2" id="text-org031859f">
+<p>
+evil mode <a href="https://evil.readthedocs.io/en/latest/overview.html#installation-via-package-el">source</a>
+</p>
+</div>
+<div id="outline-container-org8e53df3" class="outline-3">
+<h3 id="org8e53df3">evil mode</h3>
+<div class="outline-text-3" id="text-org8e53df3">
+<p>
+<a href="https://github.com/emacs-evil/evil">github repo</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package evil
+  <span style="font-weight: bold;">:init</span>
+  (<span style="font-weight: bold;">setq</span> evil-toggle-key <span style="font-style: italic;">"C-&lt;f1&gt;"</span>)
+  (<span style="font-weight: bold;">setq</span> evil-shift-width 2)
+  (<span style="font-weight: bold;">setq</span> evil-want-integration t)
+  (<span style="font-weight: bold;">setq</span> evil-want-keybinding nil)
+  <span style="font-weight: bold;">:custom</span>
+  (evil-undo-system 'undo-tree)
+  <span style="font-weight: bold;">:config</span>
+  (evil-mode 1)
+
+  (define-key evil-insert-state-map (kbd <span style="font-style: italic;">"C-g"</span>) 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd <span style="font-style: italic;">"C-h"</span>) 'evil-delete-backward-char-and-join)
+
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Use visual line motions even outside of visual-line-mode buffers</span>
+  (evil-global-set-key 'motion <span style="font-style: italic;">"j"</span> 'evil-next-visual-line)
+  (evil-global-set-key 'motion <span style="font-style: italic;">"k"</span> 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'help-mode 'emacs)
+  (evil-set-initial-state 'inferior-python-mode 'emacs)
+  (evil-set-initial-state 'messages-buffer-mode 'emacs)
+  (evil-set-initial-state 'dashboard-mode 'emacs)
+  (evil-set-initial-state 'special-mode 'emacs)
+  (evil-set-initial-state 'view-mode 'emacs)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcb0062e" class="outline-3">
+<h3 id="orgcb0062e">evil-nerd-commentor</h3>
+<div class="outline-text-3" id="text-orgcb0062e">
+<p>
+Use <code>M-/</code> for comment/uncomment.
+</p>
+
+<p>
+<a href="https://github.com/redguardtoo/evil-nerd-commenter">source</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package evil-nerd-commenter
+  <span style="font-weight: bold;">:bind</span> (<span style="font-style: italic;">"M-/"</span> . evilnc-comment-or-uncomment-lines))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaab89de" class="outline-3">
+<h3 id="orgaab89de">undo-tree</h3>
+<div class="outline-text-3" id="text-orgaab89de">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package undo-tree
+  <span style="font-weight: bold;">:diminish</span> undo-tree-mode
+  <span style="font-weight: bold;">:config</span>
+  (global-undo-tree-mode)
+  )
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfb2b069" class="outline-2">
+<h2 id="orgfb2b069">Ivy, counsel</h2>
+<div class="outline-text-2" id="text-orgfb2b069">
+</div>
+<div id="outline-container-org91ae8c6" class="outline-3">
+<h3 id="org91ae8c6">counsel</h3>
+<div class="outline-text-3" id="text-org91ae8c6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package counsel
+  <span style="font-weight: bold;">:diminish</span> ivy-mode
+  <span style="font-weight: bold;">:diminish</span> counsel-mode
+  <span style="font-weight: bold;">:bind</span> ((<span style="font-style: italic;">"C-s"</span> . swiper)
+         <span style="font-weight: bold;">:map</span> ivy-minibuffer-map
+         (<span style="font-style: italic;">"TAB"</span> . ivy-alt-done))
+  <span style="font-weight: bold;">:init</span>
+  (ivy-mode 1)
+  (counsel-mode 1)
+  <span style="font-weight: bold;">:config</span>
+  (<span style="font-weight: bold;">setq</span> ivy-use-virtual-buffers t)
+  (<span style="font-weight: bold;">setq</span> enable-recursive-minibuffers t))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf9546f1" class="outline-3">
+<h3 id="orgf9546f1">ivy-misc</h3>
+<div class="outline-text-3" id="text-orgf9546f1">
+<p>
+<a href="https://github.com/Yevgnen/ivy-rich">https://github.com/Yevgnen/ivy-rich</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package ivy-xref
+  <span style="font-weight: bold;">:init</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">xref initialization is different in Emacs 27 - there are two different</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">variables which can be set rather than just one</span>
+  (<span style="font-weight: bold;">when</span> (&gt;= emacs-major-version 27)
+    (<span style="font-weight: bold;">setq</span> xref-show-definitions-function #'ivy-xref-show-defs))
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Necessary in Emacs &lt;27. In Emacs 27 it will affect all xref-based</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">commands other than xref-find-definitions (e.g. project-find-regexp)</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">as well</span>
+  (<span style="font-weight: bold;">setq</span> xref-show-xrefs-function #'ivy-xref-show-xrefs))
+
+(use-package ivy-rich
+  <span style="font-weight: bold;">:init</span>
+  (ivy-rich-mode 1))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb112540" class="outline-3">
+<h3 id="orgb112540">prescient</h3>
+<div class="outline-text-3" id="text-orgb112540">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package ivy-prescient
+  <span style="font-weight: bold;">:after</span> counsel
+  <span style="font-weight: bold;">:init</span>
+  (ivy-prescient-mode)
+  (prescient-persist-mode)
+  )
+(use-package prescient
+  <span style="font-weight: bold;">:diminish</span>
+  <span style="font-weight: bold;">:config</span>
+  )
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8187a44" class="outline-2">
+<h2 id="org8187a44">Treemacs</h2>
+<div class="outline-text-2" id="text-org8187a44">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package treemacs)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org248ab29" class="outline-2">
+<h2 id="org248ab29">Tools</h2>
+<div class="outline-text-2" id="text-org248ab29">
+</div>
+<div id="outline-container-org7283f47" class="outline-3">
+<h3 id="org7283f47">which-key</h3>
+<div class="outline-text-3" id="text-org7283f47">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package which-key
+  <span style="font-weight: bold;">:diminish</span> which-key-mode
+  <span style="font-weight: bold;">:config</span>
+  (which-key-mode))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3ba4561" class="outline-3">
+<h3 id="org3ba4561">magit</h3>
+<div class="outline-text-3" id="text-org3ba4561">
+<p>
+<a href="https://magit.vc/">Magit</a> is the best Git interface. Common Git operations are easy to execute quickly using Magit’s command panel system.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package magit
+  <span style="font-weight: bold;">:defer</span> t
+  <span style="font-weight: bold;">:bind</span> (<span style="font-style: italic;">"C-x g"</span> . magit-status))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org27c4eb6" class="outline-3">
+<h3 id="org27c4eb6">projectile</h3>
+<div class="outline-text-3" id="text-org27c4eb6">
+<p>
+<a href="https://docs.projectile.mx/projectile/index.html">Projectile</a> is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages. Many packages integrate with Projectile so it’s a good idea to have it installed even if you don’t use its commands directly.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package projectile
+  <span style="font-weight: bold;">:diminish</span> projectile-mode
+  <span style="font-weight: bold;">:hook</span>
+  (after-init . projectile-mode)
+  <span style="font-weight: bold;">:bind-keymap</span>
+  (<span style="font-style: italic;">"C-c p"</span> . projectile-command-map)
+  <span style="font-weight: bold;">:init</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">NOTE: Set this to the folder where you keep your Git repos!</span>
+  (<span style="font-weight: bold;">setq</span> projectile-project-search-path '(<span style="font-style: italic;">"~/foo/projects"</span> <span style="font-style: italic;">"~/foo/reports"</span>))
+  (<span style="font-weight: bold;">setq</span> projectile-switch-project-action #'projectile-dired)
+  <span style="font-weight: bold;">:custom</span>
+  (projectile-completion-system 'ivy)
+  (projectile-dynamic-mode-line nil)
+  (projectile-enable-caching t)
+  (projectile-indexing-method 'hybrid)
+  (projectile-track-known-projects-automatically nil))
+
+(use-package counsel-projectile
+  <span style="font-weight: bold;">:config</span> (counsel-projectile-mode))
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org68c2b6e" class="outline-3">
+<h3 id="org68c2b6e">eldoc</h3>
+<div class="outline-text-3" id="text-org68c2b6e">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eldoc
+  <span style="font-weight: bold;">:diminish</span> eldoc-mode
+  )
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9416384" class="outline-2">
+<h2 id="org9416384">Company</h2>
+<div class="outline-text-2" id="text-org9416384">
+</div>
+<div id="outline-container-org4c8fdd6" class="outline-3">
+<h3 id="org4c8fdd6">company-mode</h3>
+<div class="outline-text-3" id="text-org4c8fdd6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package company
+  <span style="font-weight: bold;">:diminish</span> company-mode
+  <span style="font-weight: bold;">:bind</span> (<span style="font-weight: bold;">:map</span> company-active-map
+              (<span style="font-style: italic;">"&lt;tab&gt;"</span> . nil)
+              (<span style="font-style: italic;">"TAB"</span> . nil)
+              (<span style="font-style: italic;">"M-&lt;tab&gt;"</span> . company-complete-common-or-cycle)
+              (<span style="font-style: italic;">"M-&lt;tab&gt;"</span> . company-complete-selection))
+  (<span style="font-weight: bold;">:map</span> lsp-mode-map
+        (<span style="font-style: italic;">"M-&lt;tab&gt;"</span> . company-indent-or-complete-common))
+  <span style="font-weight: bold;">:custom</span>
+  (company-minimum-prefix-length 2)
+  (company-idle-delay 0.01)
+  <span style="font-weight: bold;">:config</span>
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9408724" class="outline-3">
+<h3 id="org9408724">prescient</h3>
+<div class="outline-text-3" id="text-org9408724">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package company-prescient
+  <span style="font-weight: bold;">:after</span> company
+  <span style="font-weight: bold;">:config</span>
+  (company-prescient-mode 1)
+  (prescient-persist-mode)
+  )
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org198face" class="outline-2">
+<h2 id="org198face">Yasnippet</h2>
+<div class="outline-text-2" id="text-org198face">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package yasnippet-snippets)
+(use-package yasnippet
+  <span style="font-weight: bold;">:diminish</span> yas-minor-mode
+  <span style="font-weight: bold;">:config</span>
+    (yas-reload-all)
+)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org665f77b" class="outline-2">
+<h2 id="org665f77b">Flycheck</h2>
+<div class="outline-text-2" id="text-org665f77b">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package flycheck
+  <span style="font-weight: bold;">:diminish</span> flycheck-mode
+  <span style="font-weight: bold;">:init</span>
+  (<span style="font-weight: bold;">setq</span> flycheck-check-syntax-automatically '(save new-line)
+        flycheck-idle-change-delay 5.0
+        flycheck-display-errors-delay 0.9
+        flycheck-highlighting-mode 'symbols
+        flycheck-indication-mode 'left-fringe
+        flycheck-standard-error-navigation t
+        flycheck-deferred-syntax-check nil)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0f7cf16" class="outline-2">
+<h2 id="org0f7cf16">Lsp mode</h2>
+<div class="outline-text-2" id="text-org0f7cf16">
+</div>
+<div id="outline-container-org0c800f5" class="outline-3">
+<h3 id="org0c800f5">lsp-mode</h3>
+<div class="outline-text-3" id="text-org0c800f5">
+<p>
+<a href="https://github.com/daviwil/dotfiles/blob/master/Emacs.org#language-server-support">EFS notes</a> <br />
+</p>
+
+<p>
+Nice article about main features of emacs lsp-mode (<a href="https://emacs-lsp.github.io/lsp-mode/page/main-features/">source)</a> <br />
+</p>
+
+<p>
+EFS video <a href="https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-08.org">notes</a><br />
+</p>
+
+<p>
+java specific lsp <a href="https://github.com/neppramod/java_emacs/blob/master/emacs-configuration.org">setting</a> to learn how to setup lsp in emacs<br />
+</p>
+
+<p>
+Nice article to switch on/off certain features of lsp (<a href="https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/">source)</a> <br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-mode
+  <span style="font-weight: bold;">:commands</span> (lsp lsp-deferred)
+  <span style="font-weight: bold;">:hook</span> 
+  (lsp-mode . lsp-enable-which-key-integration)
+  <span style="font-weight: bold;">:custom</span>
+  (lsp-diagnostics-provider <span style="font-weight: bold;">:capf</span>)
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-headerline-breadcrumb-segments '(project file symbols))
+  (lsp-lens-enable nil)
+  (lsp-disabled-clients '((python-mode . pyls)))
+  <span style="font-weight: bold;">:init</span>
+  (<span style="font-weight: bold;">setq</span> lsp-keymap-prefix <span style="font-style: italic;">"C-c l"</span>) <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Or 'C-l', 's-l'</span>
+  <span style="font-weight: bold;">:config</span>
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org414aa03" class="outline-3">
+<h3 id="org414aa03">lsp-ivy</h3>
+<div class="outline-text-3" id="text-org414aa03">
+<p>
+<a href="https://github.com/emacs-lsp/lsp-ivy">source github</a><br />
+</p>
+
+<p>
+lsp-ivy integrates Ivy with lsp-mode to make it easy to search for things by name in your code. When you run these commands, a prompt will appear in the minibuffer allowing you to type part of the name of a symbol in your code. Results will be populated in the minibuffer so that you can find what you’re looking for and jump to that location in the code upon selecting the result.<br />
+</p>
+
+<p>
+Try these commands with <code>M-x</code>:<br />
+</p>
+
+<p>
+<code>lsp-ivy-workspace-symbol</code> - Search for a symbol name in the current project workspace<br />
+</p>
+
+<p>
+<code>lsp-ivy-global-workspace-symbol</code> - Search for a symbol name in all active project workspaces<br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-ivy
+  <span style="font-weight: bold;">:after</span> lsp-mode
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7f8796c" class="outline-3">
+<h3 id="org7f8796c">lsp-ui</h3>
+<div class="outline-text-3" id="text-org7f8796c">
+<p>
+Documentation: <a href="https://emacs-lsp.github.io/lsp-ui/">https://emacs-lsp.github.io/lsp-ui/</a>
+</p>
+
+<ul class="org-ul">
+<li><code>lsp-ui-doc-focus-frame</code> to enter the documentation frame to navigate and search around</li>
+
+<li><code>lsp-ui-doc-unfocus-frame</code> to leave documentation frame</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-ui
+  <span style="font-weight: bold;">:hook</span> (lsp-mode . lsp-ui-mode)
+  <span style="font-weight: bold;">:after</span> lsp-mode
+  <span style="font-weight: bold;">:custom</span>
+  (lsp-ui-doc-show-with-cursor nil)
+  <span style="font-weight: bold;">:config</span>
+  (<span style="font-weight: bold;">setq</span> lsp-ui-doc-position 'bottom)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0e9a388" class="outline-3">
+<h3 id="org0e9a388">lsp-treemacs</h3>
+<div class="outline-text-3" id="text-org0e9a388">
+<p>
+Provides an even nicer UI on top of lsp-mode using Treemacs<br />
+</p>
+
+<ul class="org-ul">
+<li><code>lsp-treemacs-symbols</code> - Show a tree view of the symbols in the current file</li>
+
+<li><code>lsp-treemacs-references</code> - Show a tree view for the references of the symbol under the cursor</li>
+
+<li><code>lsp-treemacs-error-list</code> - Show a tree view for the diagnostic messages in the project</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-treemacs
+  <span style="font-weight: bold;">:after</span> (lsp-mode treemacs)
+  )
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb042e0c" class="outline-2">
+<h2 id="orgb042e0c">Python configuration</h2>
+<div class="outline-text-2" id="text-orgb042e0c">
+<p>
+<a href="https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-IDE-02.org">efs series notes</a><br />
+</p>
+
+<p>
+<a href="https://ddavis.io/posts/emacs-python-lsp">https://ddavis.io/posts/emacs-python-lsp</a><br />
+</p>
+
+<p>
+some options are
+</p>
+
+<ul class="org-ul">
+<li><a href="https://emacs-lsp.github.io/lsp-mode/page/lsp-pyls/">pyls</a> Palantir</li>
+
+<li><a href="https://emacs-lsp.github.io/lsp-python-ms">microsoft</a> now depreciated by MS</li>
+
+<li><a href="https://emacs-lsp.github.io/lsp-pyright">pyright</a> also by Microsoft</li>
+</ul>
+</div>
+
+<div id="outline-container-org9949cbc" class="outline-3">
+<h3 id="org9949cbc">pyright</h3>
+<div class="outline-text-3" id="text-org9949cbc">
+<p>
+<a href="https://emacs-lsp.github.io/lsp-pyright/#configuration">config</a> <br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-pyright
+  <span style="font-weight: bold;">:hook</span>
+  (python-mode . (<span style="font-weight: bold;">lambda</span> ()
+                   (<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">lsp-pyright</span>)
+                   (lsp-deferred))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf27e38c" class="outline-3">
+<h3 id="orgf27e38c">pyvenv</h3>
+<div class="outline-text-3" id="text-orgf27e38c">
+<p>
+Strongly recommend to use python virtualenv to python work properly in emacs.<br />
+</p>
+
+<p>
+Assuming venvs are installed here <code>~/.venvs</code><br />
+</p>
+
+<p>
+Learn about setting python virtual env below<br />
+</p>
+
+<p>
+<a href="https://blog.fredrikmeyer.net/2020/08/26/emacs-python-venv.html">https://blog.fredrikmeyer.net/2020/08/26/emacs-python-venv.html</a><br />
+</p>
+
+<p>
+<a href="https://ddavis.io/posts/emacs-python-lsp">https://ddavis.io/posts/emacs-python-lsp</a><br />
+</p>
+
+<p>
+You can use <code>M-x pyvenv-activate</code> to activate specific venv <br />
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package pyvenv
+  <span style="font-weight: bold;">:ensure</span> t
+  <span style="font-weight: bold;">:init</span>
+  (setenv <span style="font-style: italic;">"WORKON_HOME"</span> <span style="font-style: italic;">"~/.venvs/"</span>)
+  <span style="font-weight: bold;">:config</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">(pyvenv-mode t)</span>
+
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Set correct Python interpreter</span>
+  (<span style="font-weight: bold;">setq</span> pyvenv-post-activate-hooks
+        (list (<span style="font-weight: bold;">lambda</span> ()
+                (<span style="font-weight: bold;">setq</span> python-shell-interpreter (concat pyvenv-virtual-env <span style="font-style: italic;">"bin/python"</span>)))))
+  (<span style="font-weight: bold;">setq</span> pyvenv-post-deactivate-hooks
+        (list (<span style="font-weight: bold;">lambda</span> ()
+                (<span style="font-weight: bold;">setq</span> python-shell-interpreter <span style="font-style: italic;">"python3"</span>)))))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5df762e" class="outline-3">
+<h3 id="org5df762e">formatting</h3>
+<div class="outline-text-3" id="text-org5df762e">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package blacken
+  <span style="font-weight: bold;">:init</span>
+  (<span style="font-weight: bold;">setq-default</span> blacken-fast-unsafe t)
+  (<span style="font-weight: bold;">setq-default</span> blacken-line-length 80)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgff39432" class="outline-3">
+<h3 id="orgff39432">python-mode</h3>
+<div class="outline-text-3" id="text-orgff39432">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package python-mode
+  <span style="font-weight: bold;">:hook</span>
+  (python-mode . pyvenv-mode)
+  (python-mode . flycheck-mode)
+  (python-mode . company-mode)
+  (python-mode . blacken-mode)
+  (python-mode . yas-minor-mode)
+  <span style="font-weight: bold;">:custom</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">NOTE: Set these if Python 3 is called "python3" on your system!</span>
+  (python-shell-interpreter <span style="font-style: italic;">"python3"</span>)
+  <span style="font-weight: bold;">:config</span>
+  )
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb89ba6e" class="outline-2">
+<h2 id="orgb89ba6e">Keybinding</h2>
+<div class="outline-text-2" id="text-orgb89ba6e">
+<p>
+Have a look at <a href="https://www.masteringemacs.org/article/mastering-key-bindings-emacs">mastering emacs</a> tips for emacs keybinding.<br />
+</p>
+
+<p>
+<code>C-c &lt;LETTER&gt;</code> and <code>F5-F9</code> are meant for user bindings.<br />
+</p>
+
+<p>
+For package maintainers, <code>C-c C-&lt;ANY&gt;</code> or <code>C-c &lt;DIGIT&gt;</code> or <code>C-c [{};:&lt;&gt;]</code> are reserved for the major mode. Any other are reserved for minor modes, e.g. <code>C-c @</code> in <code>outline-minor-mode</code>. <br />
+</p>
+
+<p>
+See <code>(info "(elisp) Key Binding Conventions")</code> for a more complete explanation for package maintainers. You, as a user, can of course use any key binding you like, but keep in mind that those bindings might conflict with the ones chosen by the package maintainer.<br />
+</p>
+</div>
+
+<div id="outline-container-orgcc3061e" class="outline-3">
+<h3 id="orgcc3061e">General setup</h3>
+<div class="outline-text-3" id="text-orgcc3061e">
+<p>
+we will use general package (<a href="https://github.com/noctuid/general.el">source</a>) for keybindings.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package general
+  <span style="font-weight: bold;">:config</span>
+  (general-evil-setup t)
+
+  (general-create-definer my/ctrl-c-keys
+    <span style="font-weight: bold;">:prefix</span> <span style="font-style: italic;">"C-c"</span>)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org557a051" class="outline-3">
+<h3 id="org557a051">Global keys</h3>
+<div class="outline-text-3" id="text-org557a051">
+<p>
+use <code>C-c</code> prefix for global keybinding defined below
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(my/ctrl-c-keys
+  <span style="font-style: italic;">"t"</span>  '(treemacs-select-window <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"treemacs-select"</span>)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org37fed38" class="outline-3">
+<h3 id="org37fed38">Lsp keybinding</h3>
+<div class="outline-text-3" id="text-org37fed38">
+<p>
+use <code>SPC</code> prefix for <code>lsp-mode</code> keybinding defined below. These keybindings are for <code>evil</code> normal mode.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(general-define-key
+ <span style="font-weight: bold;">:states</span> '(normal visual)
+ <span style="font-weight: bold;">:keymaps</span> 'lsp-mode-map
+ <span style="font-weight: bold;">:prefix</span> <span style="font-style: italic;">"SPC"</span>
+  <span style="font-style: italic;">"d"</span> '(lsp-find-definition <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"find-definitions"</span>)
+  <span style="font-style: italic;">"r"</span> '(lsp-find-references <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"find-references"</span>)
+  <span style="font-style: italic;">"h"</span> '(lsp-describe-thing-at-point <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"help-detailed"</span>)
+  <span style="font-style: italic;">"e"</span> '(lsp-ui-flycheck-list <span style="font-weight: bold;">:which-key</span> <span style="font-style: italic;">"flycheck-list"</span>)
+  <span style="font-style: italic;">"o"</span> 'counsel-imenu
+  <span style="font-style: italic;">"x"</span> 'lsp-execute-code-action)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6d27953" class="outline-2">
+<h2 id="org6d27953">Workflow</h2>
+<div class="outline-text-2" id="text-org6d27953">
+<p>
+We assume following file structure for your project 
+</p>
+<pre class="example">
+fooproject
+|--- .git
+|--- src
+     |--- foo.py
+|--- .dir-locals.el
+|--- pyrightconfig.json
+
+</pre>
+
+<p>
+We assume <code>~/.venvs/foo_env</code> is the virtual environment you want to use for this project<br />
+</p>
+
+<p>
+The <code>~/.venvs</code> folder is already set in <code>pyvenv</code> setting above.<br />
+</p>
+
+<p>
+So, <code>foo_env</code> will be set using <code>pyvenv-workon</code> variable using <code>.dir-locals.el</code> file
+</p>
+</div>
+
+<div id="outline-container-orgd89f7ad" class="outline-4">
+<h4 id="orgd89f7ad">.dir-locals.el</h4>
+<div class="outline-text-4" id="text-orgd89f7ad">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(python-mode . ((pyvenv-workon . <span style="font-style: italic;">"foo_env"</span>)))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org74cb31f" class="outline-4">
+<h4 id="org74cb31f">pyrightconfig.json (optional)</h4>
+<div class="outline-text-4" id="text-org74cb31f">
+<p>
+You can using minimal expample as your pyrightconfig file
+</p>
+
+<p>
+Check following for more options (<a href="https://github.com/microsoft/pyright/blob/master/docs/configuration.md">source</a>)
+</p>
+
+<pre class="example">
+{
+  "include": [
+    "src"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "src"
+    }
+  ]
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf573f78" class="outline-2">
+<h2 id="orgf573f78">How to set python virtualenv</h2>
+<div class="outline-text-2" id="text-orgf573f78">
+<p>
+Some useful commands to setup virtualenv<br />
+</p>
+
+<ul class="org-ul">
+<li>installation</li>
+</ul>
+
+<pre class="example">
+$ pip3 install virtualenv
+$ pip3 list
+$ mkdir ~/.venvs
+$ cd ~/.venvs
+</pre>
+
+<ul class="org-ul">
+<li>create virtual environment</li>
+</ul>
+
+<pre class="example">
+$ virtualenv foo_env
+$ source foo_env/bin/activate
+$ which python 
+</pre>
+
+<ul class="org-ul">
+<li>install packages in virtual env</li>
+</ul>
+
+<pre class="example">
+$ pip install numpy
+$ pip list
+$ pip freeze --local &gt; requirement.txt
+</pre>
+
+<ul class="org-ul">
+<li>deactivate virtualenv</li>
+</ul>
+
+<pre class="example">
+$ deactivate
+</pre>
+
+<ul class="org-ul">
+<li>add pythonpath (<code>.pth</code>) to already existing virtulenv</li>
+</ul>
+
+<p>
+If you have external projects you want to include in the pythonpath of your virtualenv, checkout following,<br />
+</p>
+
+<p>
+<a href="https://stackoverflow.com/a/47184788/237059">https://stackoverflow.com/a/47184788/237059</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="font-weight: bold;">cd</span> $(python -c <span style="font-style: italic;">"from distutils.sysconfig import get_python_lib; print(get_python_lib())"</span>)
+<span style="font-weight: bold;">echo</span> some/library/path &gt; some-library.pth
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.3 (<a href="https://orgmode.org">Org</a> mode 9.1.9)</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org75eb52c">Installing gccemacs</a></li>
+<li><a href="#org2484c2a">Using emacs-profiles</a></li>
+<li><a href="#orgf0ee8ce">Some changes in config file for gccemacs</a></li>
+<li><a href="#orgbb525bc">Running parallel emacs</a>
+<ul>
+<li><a href="#org3f6fabe">default emacs</a></li>
+<li><a href="#org233e972">gccemacs</a></li>
+</ul>
+</li>
+<li><a href="#org02a8218">Issues/Bugs and the solutions</a></li>
+</ul>
+</div>
+</div>
+<p>
+In this article we will see various steps to test/try <code>emacs-28</code> with native compilation support on <code>Ubuntu 20.04LTS</code>. We will not touch existing emacs installed using <code>apt</code> on the Ubuntu, but will manually compile another version of <code>emacs-28</code> with <code>native-compilation</code> support (called <code>gccemacs</code> henceforth) in the <code>~/opt/emacs-native</code> folder. These two versions of emacs (already installed and <code>gccemacs</code>) will use different config files (<code>init.el</code>) and user-directories (<code>~/.emacs.d</code>) using <code>chemacs2</code>, so that they don't interfere with each other. Using this approach users can try <code>gccemacs</code> without breaking their stable emacs config.
+</p>
+
+<p>
+Please help us improving this wiki by reporting any bugs/issues in the wiki github repo. 
+</p>
+
+<div id="outline-container-org75eb52c" class="outline-2">
+<h2 id="org75eb52c">Installing gccemacs</h2>
+<div class="outline-text-2" id="text-org75eb52c">
+<p>
+check for any errors during <code>./configure</code> step, you may be missing some libraries, which need to be installed using <code>apt</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">mkdir -p ~/opt
+mkdir -p ~/opt/emacs-native
+<span style="font-weight: bold;">cd</span> ~/opt
+sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
+sudo apt install gcc-10 g++-10 libgccjit0 libgccjit-10-dev libjansson4 libjansson-dev
+sudo apt install libxpm-dev libgif-dev libtiff-dev libgnutls28-dev libmagick++-dev
+git clone git://git.sv.gnu.org/emacs.git gccemacs
+<span style="font-weight: bold;">cd</span> gccemacs
+git checkout master
+<span style="font-weight: bold;">export</span> <span style="font-weight: bold; font-style: italic;">CC</span>=/usr/bin/gcc-10 <span style="font-weight: bold; font-style: italic;">CXX</span>=/usr/bin/gcc-10
+./autogen.sh
+./configure --with-cairo --with-modules --without-compress-install --with-x-toolkit=no --with-gnutls --without-gconf --without-xwidgets --without-toolkit-scroll-bars --without-xaw3d --without-gsettings --with-mailutils --with-native-compilation --with-json --with-harfbuzz --with-imagemagick --with-jpeg --with-png --with-rsvg --with-tiff --with-wide-int --with-xft --with-xml2 --with-xpm <span style="font-weight: bold; font-style: italic;">CFLAGS</span>=<span style="font-style: italic;">"-O3 -mtune=native -march=native -fomit-frame-pointer"</span> <span style="font-weight: bold; font-style: italic;">prefix</span>=~/opt/emacs-native
+make -j2 <span style="font-weight: bold; font-style: italic;">NATIVE_FULL_AOT</span>=1
+make install
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2484c2a" class="outline-2">
+<h2 id="org2484c2a">Using emacs-profiles</h2>
+<div class="outline-text-2" id="text-org2484c2a">
+<ul class="org-ul">
+<li>Install <a href="https://github.com/plexus/chemacs2">chemacs2</a> using following script</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">[ -f ~/.emacs ] &amp;&amp; mv ~/.emacs ~/.emacs.bak
+[ -d ~/.emacs.d ] &amp;&amp; mv ~/.emacs.d ~/.emacs.default
+git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>save following in <code>~/.emacs-profile.el</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(
+ (<span style="font-style: italic;">"default"</span> . ((user-emacs-directory . <span style="font-style: italic;">"~/.emacs.default"</span>)
+  (server-name . <span style="font-style: italic;">"default-server"</span>)))
+ (<span style="font-style: italic;">"gccemacs"</span> . ((user-emacs-directory . <span style="font-style: italic;">"~/.gccemacs.d"</span>)
+  (server-name . <span style="font-style: italic;">"gccemacs-server"</span>)))
+)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>copy your default config <code>init.el</code> to gccemacs folder</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">mkdir -p ~/.gccemacs.d
+cp ~/.emacs.default/init.el ~/.gccemacs.d/init.el
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf0ee8ce" class="outline-2">
+<h2 id="orgf0ee8ce">Some changes in config file for gccemacs</h2>
+<div class="outline-text-2" id="text-orgf0ee8ce">
+<ul class="org-ul">
+<li>You can add following lines in your new <code>init.el</code>  (in the <code>~/.gccemacs.d</code> folder)just to check if native-compilation and native json is working</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">setq</span> comp-deferred-compilation t)
+
+(<span style="font-weight: bold;">if</span> (<span style="font-weight: bold;">and</span> (fboundp 'native-comp-available-p)
+       (native-comp-available-p))
+  (message <span style="font-style: italic;">"Native compilation is available"</span>)
+(message <span style="font-style: italic;">"Native complation is *not* available"</span>))
+
+(<span style="font-weight: bold;">if</span> (functionp 'json-serialize)
+  (message <span style="font-style: italic;">"Native JSON is available"</span>)
+(message <span style="font-style: italic;">"Native JSON is *not* available"</span>))
+
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>straight.el</code> uses its own native compilation which can create some problems. You can switch off this using <code>:build (:not native-compile)</code>, for e.g. in case of <code>doom-themes</code>, one can use the following</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package doom-themes
+  <span style="font-weight: bold;">:straight</span> '(doom-themes <span style="font-weight: bold;">:build</span> (<span style="font-weight: bold;">:not</span> native-compile))
+  <span style="font-weight: bold;">:init</span>
+  (load-theme 'doom-nord t)
+)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbb525bc" class="outline-2">
+<h2 id="orgbb525bc">Running parallel emacs</h2>
+<div class="outline-text-2" id="text-orgbb525bc">
+</div>
+<div id="outline-container-org3f6fabe" class="outline-3">
+<h3 id="org3f6fabe">default emacs</h3>
+<div class="outline-text-3" id="text-org3f6fabe">
+<ul class="org-ul">
+<li>run emacs without daemon (It is better to run this if you are running emacs first time after making all changes using <code>chemacs2</code>). Try it 2-3 times so that no error/installation is left.</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">emacs --with-profile=default
+</pre>
+</div>
+<ul class="org-ul">
+<li>If you are emacs daemon user then following will work</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">emacs --with-profile=default --daemon
+</pre>
+</div>
+<ul class="org-ul">
+<li>run a instance of daemon using (after previous step)</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">emacsclient -c -s /run/user/1000/emacs/default-server
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org233e972" class="outline-3">
+<h3 id="org233e972">gccemacs</h3>
+<div class="outline-text-3" id="text-org233e972">
+<ul class="org-ul">
+<li>run emacs without daemon (It is better to run this if you are running emacs first time after making all changes using <code>chemacs2</code>). Try it 2-3 times so that no error/installtion is left.</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">~/opt/emacs-native/bin/emacs --with-profile=gccemacs
+</pre>
+</div>
+<ul class="org-ul">
+<li>If you are emacs daemon user then following will work</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">~/opt/emacs-native/bin/emacs --with-profile=gccemacs --daemon
+</pre>
+</div>
+<ul class="org-ul">
+<li>run a instance of daemon using (after previous step)</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-shell">~/opt/emacs-native/bin/emacsclient -c -s /run/user/1000/emacs/gccemacs-server
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org02a8218" class="outline-2">
+<h2 id="org02a8218">Issues/Bugs and the solutions</h2>
+<div class="outline-text-2" id="text-org02a8218">
+<ul class="org-ul">
+<li>Some packages like <code>vterm</code>, <code>pdf-tools</code> couldn't compile for first time, but after restarting the computer somehow, they are working fine.</li>
+<li>Many packages show lot of <code>warning</code> messages. This happens when you are using these packages for first time. Shouldn't be a problem after that.</li>
+<li>Some user reported problem using <code>exwm</code>, didn't try it yet.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.3 (<a href="https://orgmode.org">Org</a> mode 9.1.9)</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>
