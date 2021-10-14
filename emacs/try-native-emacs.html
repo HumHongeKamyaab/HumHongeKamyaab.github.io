@@ -15,16 +15,16 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org75eb52c">Installing gccemacs</a></li>
-<li><a href="#org2484c2a">Using emacs-profiles</a></li>
-<li><a href="#orgf0ee8ce">Some changes in config file for gccemacs</a></li>
-<li><a href="#orgbb525bc">Running parallel emacs</a>
+<li><a href="#org4d7ff15">Installing gccemacs</a></li>
+<li><a href="#orga5b0f58">Using emacs-profiles</a></li>
+<li><a href="#org59f6dcd">Some changes in config file for gccemacs</a></li>
+<li><a href="#orgd00bbcb">Running parallel emacs</a>
 <ul>
-<li><a href="#org3f6fabe">default emacs</a></li>
-<li><a href="#org233e972">gccemacs</a></li>
+<li><a href="#org854e8db">default emacs</a></li>
+<li><a href="#orgd23e49f">gccemacs</a></li>
 </ul>
 </li>
-<li><a href="#org02a8218">Issues/Bugs and the solutions</a></li>
+<li><a href="#org2979d43">Issues/Bugs and the solutions</a></li>
 </ul>
 </div>
 </div>
@@ -36,9 +36,9 @@ In this article we will see various steps to test/try <code>emacs-28</code> with
 Please help us improving this wiki by reporting any bugs/issues in the wiki github repo. 
 </p>
 
-<div id="outline-container-org75eb52c" class="outline-2">
-<h2 id="org75eb52c">Installing gccemacs</h2>
-<div class="outline-text-2" id="text-org75eb52c">
+<div id="outline-container-org4d7ff15" class="outline-2">
+<h2 id="org4d7ff15">Installing gccemacs</h2>
+<div class="outline-text-2" id="text-org4d7ff15">
 <p>
 check for any errors during <code>./configure</code> step, you may be missing some libraries, which need to be installed using <code>apt</code>.
 </p>
@@ -63,9 +63,9 @@ make install
 </div>
 </div>
 
-<div id="outline-container-org2484c2a" class="outline-2">
-<h2 id="org2484c2a">Using emacs-profiles</h2>
-<div class="outline-text-2" id="text-org2484c2a">
+<div id="outline-container-orga5b0f58" class="outline-2">
+<h2 id="orga5b0f58">Using emacs-profiles</h2>
+<div class="outline-text-2" id="text-orga5b0f58">
 <ul class="org-ul">
 <li>Install <a href="https://github.com/plexus/chemacs2">chemacs2</a> using following script</li>
 </ul>
@@ -100,9 +100,9 @@ cp ~/.emacs.default/init.el ~/.gccemacs.d/init.el
 </div>
 </div>
 
-<div id="outline-container-orgf0ee8ce" class="outline-2">
-<h2 id="orgf0ee8ce">Some changes in config file for gccemacs</h2>
-<div class="outline-text-2" id="text-orgf0ee8ce">
+<div id="outline-container-org59f6dcd" class="outline-2">
+<h2 id="org59f6dcd">Some changes in config file for gccemacs</h2>
+<div class="outline-text-2" id="text-org59f6dcd">
 <ul class="org-ul">
 <li>You can add following lines in your new <code>init.el</code>  (in the <code>~/.gccemacs.d</code> folder)just to check if native-compilation and native json is working</li>
 </ul>
@@ -136,13 +136,13 @@ cp ~/.emacs.default/init.el ~/.gccemacs.d/init.el
 </div>
 </div>
 
-<div id="outline-container-orgbb525bc" class="outline-2">
-<h2 id="orgbb525bc">Running parallel emacs</h2>
-<div class="outline-text-2" id="text-orgbb525bc">
+<div id="outline-container-orgd00bbcb" class="outline-2">
+<h2 id="orgd00bbcb">Running parallel emacs</h2>
+<div class="outline-text-2" id="text-orgd00bbcb">
 </div>
-<div id="outline-container-org3f6fabe" class="outline-3">
-<h3 id="org3f6fabe">default emacs</h3>
-<div class="outline-text-3" id="text-org3f6fabe">
+<div id="outline-container-org854e8db" class="outline-3">
+<h3 id="org854e8db">default emacs</h3>
+<div class="outline-text-3" id="text-org854e8db">
 <ul class="org-ul">
 <li>run emacs without daemon (It is better to run this if you are running emacs first time after making all changes using <code>chemacs2</code>). Try it 2-3 times so that no error/installation is left.</li>
 </ul>
@@ -167,9 +167,9 @@ cp ~/.emacs.default/init.el ~/.gccemacs.d/init.el
 </div>
 </div>
 
-<div id="outline-container-org233e972" class="outline-3">
-<h3 id="org233e972">gccemacs</h3>
-<div class="outline-text-3" id="text-org233e972">
+<div id="outline-container-orgd23e49f" class="outline-3">
+<h3 id="orgd23e49f">gccemacs</h3>
+<div class="outline-text-3" id="text-orgd23e49f">
 <ul class="org-ul">
 <li>run emacs without daemon (It is better to run this if you are running emacs first time after making all changes using <code>chemacs2</code>). Try it 2-3 times so that no error/installtion is left.</li>
 </ul>
@@ -195,9 +195,9 @@ cp ~/.emacs.default/init.el ~/.gccemacs.d/init.el
 </div>
 </div>
 
-<div id="outline-container-org02a8218" class="outline-2">
-<h2 id="org02a8218">Issues/Bugs and the solutions</h2>
-<div class="outline-text-2" id="text-org02a8218">
+<div id="outline-container-org2979d43" class="outline-2">
+<h2 id="org2979d43">Issues/Bugs and the solutions</h2>
+<div class="outline-text-2" id="text-org2979d43">
 <ul class="org-ul">
 <li>Some packages like <code>vterm</code>, <code>pdf-tools</code> couldn't compile for first time, but after restarting the computer somehow, they are working fine.</li>
 <li>Many packages show lot of <code>warning</code> messages. This happens when you are using these packages for first time. Shouldn't be a problem after that.</li>

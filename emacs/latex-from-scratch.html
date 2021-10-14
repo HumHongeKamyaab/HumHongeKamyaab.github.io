@@ -15,38 +15,38 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgecca46a">Packages and config</a>
+<li><a href="#org2383626">Packages and config</a>
 <ul>
-<li><a href="#orgdd07dba">straight</a></li>
-<li><a href="#org726f747">evil</a></li>
-<li><a href="#org29678af">counsel, ivy setting</a></li>
-<li><a href="#org817de30">company</a></li>
-<li><a href="#org380f1cb">magit, which key</a></li>
-<li><a href="#org7170f5c">pdf-tools</a></li>
-<li><a href="#orgfcbde10">Custom functions</a></li>
-<li><a href="#orgcdb3cbb">Olivetti</a></li>
-<li><a href="#org8999bdb">latex</a>
+<li><a href="#org513bf79">straight</a></li>
+<li><a href="#org4eae9f4">evil</a></li>
+<li><a href="#orgc4a1c81">counsel, ivy setting</a></li>
+<li><a href="#org6e7f653">company</a></li>
+<li><a href="#org2572ead">magit, which key</a></li>
+<li><a href="#org2f1073b">pdf-tools</a></li>
+<li><a href="#org4a0c0e6">Custom functions</a></li>
+<li><a href="#orgc27efb5">Olivetti</a></li>
+<li><a href="#orgce40ef1">latex</a>
 <ul>
-<li><a href="#org1f23eb9">folding/unfolding like org-mode</a></li>
-<li><a href="#org77bced0">auctex</a></li>
-<li><a href="#org3903355">ivy-bibtex</a></li>
-<li><a href="#org6697054">org-ref</a></li>
+<li><a href="#orgef2581f">folding/unfolding like org-mode</a></li>
+<li><a href="#orgdbf9538">auctex</a></li>
+<li><a href="#orgb049900">ivy-bibtex</a></li>
+<li><a href="#org336f02e">org-ref</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgf5e34f8">Keybinding</a></li>
-<li><a href="#orgfbf0489">Workflow</a></li>
+<li><a href="#org66b3263">Keybinding</a></li>
+<li><a href="#org4446e54">Workflow</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgecca46a" class="outline-2">
-<h2 id="orgecca46a">Packages and config</h2>
-<div class="outline-text-2" id="text-orgecca46a">
+<div id="outline-container-org2383626" class="outline-2">
+<h2 id="org2383626">Packages and config</h2>
+<div class="outline-text-2" id="text-org2383626">
 </div>
-<div id="outline-container-orgdd07dba" class="outline-3">
-<h3 id="orgdd07dba">straight</h3>
-<div class="outline-text-3" id="text-orgdd07dba">
+<div id="outline-container-org513bf79" class="outline-3">
+<h3 id="org513bf79">straight</h3>
+<div class="outline-text-3" id="text-org513bf79">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(<span style="font-weight: bold;">defvar</span> <span style="font-weight: bold; font-style: italic;">bootstrap-version</span>)
 (<span style="font-weight: bold;">let</span> ((bootstrap-file
@@ -68,9 +68,9 @@
 </div>
 </div>
 
-<div id="outline-container-org726f747" class="outline-3">
-<h3 id="org726f747">evil</h3>
-<div class="outline-text-3" id="text-org726f747">
+<div id="outline-container-org4eae9f4" class="outline-3">
+<h3 id="org4eae9f4">evil</h3>
+<div class="outline-text-3" id="text-org4eae9f4">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">  (use-package evil
     <span style="font-weight: bold;">:init</span>
@@ -97,9 +97,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org29678af" class="outline-3">
-<h3 id="org29678af">counsel, ivy setting</h3>
-<div class="outline-text-3" id="text-org29678af">
+<div id="outline-container-orgc4a1c81" class="outline-3">
+<h3 id="orgc4a1c81">counsel, ivy setting</h3>
+<div class="outline-text-3" id="text-orgc4a1c81">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">  (use-package counsel
     <span style="font-weight: bold;">:diminish</span> ivy-mode
@@ -131,9 +131,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org817de30" class="outline-3">
-<h3 id="org817de30">company</h3>
-<div class="outline-text-3" id="text-org817de30">
+<div id="outline-container-org6e7f653" class="outline-3">
+<h3 id="org6e7f653">company</h3>
+<div class="outline-text-3" id="text-org6e7f653">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(use-package company
   <span style="font-weight: bold;">:straight</span> (company <span style="font-weight: bold;">:files</span> (<span style="font-weight: bold;">:defaults</span> <span style="font-style: italic;">"icons"</span>))
@@ -158,9 +158,9 @@
 </div>
 </div>
 
-<div id="outline-container-org380f1cb" class="outline-3">
-<h3 id="org380f1cb">magit, which key</h3>
-<div class="outline-text-3" id="text-org380f1cb">
+<div id="outline-container-org2572ead" class="outline-3">
+<h3 id="org2572ead">magit, which key</h3>
+<div class="outline-text-3" id="text-org2572ead">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(use-package which-key
   <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">:ensure t</span>
@@ -177,9 +177,9 @@
 </div>
 </div>
 </div>
-<div id="outline-container-org7170f5c" class="outline-3">
-<h3 id="org7170f5c">pdf-tools</h3>
-<div class="outline-text-3" id="text-org7170f5c">
+<div id="outline-container-org2f1073b" class="outline-3">
+<h3 id="org2f1073b">pdf-tools</h3>
+<div class="outline-text-3" id="text-org2f1073b">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(use-package pdf-tools
   <span style="font-weight: bold;">:magic</span> (<span style="font-style: italic;">"%PDF"</span> . pdf-view-mode)
@@ -193,9 +193,9 @@
 </div>
 </div>
 
-<div id="outline-container-orgfcbde10" class="outline-3">
-<h3 id="orgfcbde10">Custom functions</h3>
-<div class="outline-text-3" id="text-orgfcbde10">
+<div id="outline-container-org4a0c0e6" class="outline-3">
+<h3 id="org4a0c0e6">Custom functions</h3>
+<div class="outline-text-3" id="text-org4a0c0e6">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">
 (<span style="font-weight: bold;">defun</span> <span style="font-weight: bold;">try/TeX-command-save-buffer-and-run-all</span> ()
@@ -264,9 +264,9 @@
 </div>
 </div>
 
-<div id="outline-container-orgcdb3cbb" class="outline-3">
-<h3 id="orgcdb3cbb">Olivetti</h3>
-<div class="outline-text-3" id="text-orgcdb3cbb">
+<div id="outline-container-orgc27efb5" class="outline-3">
+<h3 id="orgc27efb5">Olivetti</h3>
+<div class="outline-text-3" id="text-orgc27efb5">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(use-package olivetti
 <span style="font-weight: bold;">:diminish</span>
@@ -279,13 +279,13 @@
 </div>
 </div>
 
-<div id="outline-container-org8999bdb" class="outline-3">
-<h3 id="org8999bdb">latex</h3>
-<div class="outline-text-3" id="text-org8999bdb">
+<div id="outline-container-orgce40ef1" class="outline-3">
+<h3 id="orgce40ef1">latex</h3>
+<div class="outline-text-3" id="text-orgce40ef1">
 </div>
-<div id="outline-container-org1f23eb9" class="outline-4">
-<h4 id="org1f23eb9">folding/unfolding like org-mode</h4>
-<div class="outline-text-4" id="text-org1f23eb9">
+<div id="outline-container-orgef2581f" class="outline-4">
+<h4 id="orgef2581f">folding/unfolding like org-mode</h4>
+<div class="outline-text-4" id="text-orgef2581f">
 <p>
 Enable folding and unfolding sections just like org-mode (using <code>TAB</code>) using <a href="https://github.com/alphapapa/outshine/issues/85">outshine</a>
 </p>
@@ -327,9 +327,9 @@ Check <code>outshine-cycle</code> for more options.
 </div>
 </div>
 </div>
-<div id="outline-container-org77bced0" class="outline-4">
-<h4 id="org77bced0">auctex</h4>
-<div class="outline-text-4" id="text-org77bced0">
+<div id="outline-container-orgdbf9538" class="outline-4">
+<h4 id="orgdbf9538">auctex</h4>
+<div class="outline-text-4" id="text-orgdbf9538">
 <p>
 <a href="https://people.umass.edu/weikaichen/post/emacs-academic-tools/">source: blog</a>
 </p>
@@ -403,9 +403,9 @@ Check <code>outshine-cycle</code> for more options.
 </div>
 </div>
 
-<div id="outline-container-org3903355" class="outline-4">
-<h4 id="org3903355">ivy-bibtex</h4>
-<div class="outline-text-4" id="text-org3903355">
+<div id="outline-container-orgb049900" class="outline-4">
+<h4 id="orgb049900">ivy-bibtex</h4>
+<div class="outline-text-4" id="text-orgb049900">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">
 (use-package ivy-bibtex
@@ -421,9 +421,9 @@ Check <code>outshine-cycle</code> for more options.
 </div>
 </div>
 </div>
-<div id="outline-container-org6697054" class="outline-4">
-<h4 id="org6697054">org-ref</h4>
-<div class="outline-text-4" id="text-org6697054">
+<div id="outline-container-org336f02e" class="outline-4">
+<h4 id="org336f02e">org-ref</h4>
+<div class="outline-text-4" id="text-org336f02e">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp">(use-package org-ref
 <span style="font-weight: bold;">:custom</span>
@@ -441,9 +441,9 @@ Check <code>outshine-cycle</code> for more options.
 </div>
 </div>
 
-<div id="outline-container-orgf5e34f8" class="outline-2">
-<h2 id="orgf5e34f8">Keybinding</h2>
-<div class="outline-text-2" id="text-orgf5e34f8">
+<div id="outline-container-org66b3263" class="outline-2">
+<h2 id="org66b3263">Keybinding</h2>
+<div class="outline-text-2" id="text-org66b3263">
 <p>
 Use <code>SPC</code> has leader key (in evil normal mode) for local latex mode keybindings
 </p>
@@ -471,9 +471,9 @@ Use <code>SPC</code> has leader key (in evil normal mode) for local latex mode k
 </div>
 </div>
 
-<div id="outline-container-orgfbf0489" class="outline-2">
-<h2 id="orgfbf0489">Workflow</h2>
-<div class="outline-text-2" id="text-orgfbf0489">
+<div id="outline-container-org4446e54" class="outline-2">
+<h2 id="org4446e54">Workflow</h2>
+<div class="outline-text-2" id="text-org4446e54">
 <p>
 TODO
 </p>
